@@ -163,3 +163,4 @@ cython_debug/
 .vscode
 endpoints.http
 schema.yml
+htmlcov/
