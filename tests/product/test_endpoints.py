@@ -11,7 +11,9 @@ class TestCategoryEndpoints:
         category = category_factory()
         response = api_client.get(self.url)
         assert response.status_code == 200
+        assert len(response.data) > 0
         assert response.data[0]["name"] == str(category.name)
+        assert response.headers["Content-Type"] == "application/json"
 
 
 class TestBrandEndpoints:
@@ -21,7 +23,9 @@ class TestBrandEndpoints:
         brand = brand_factory()
         response = api_client.get(self.url)
         assert response.status_code == 200
+        assert len(response.data) > 0
         assert response.data[0]["name"] == str(brand.name)
+        assert response.headers["Content-Type"] == "application/json"
 
 
 class TestProductEndpoints:
@@ -31,8 +35,10 @@ class TestProductEndpoints:
         product = product_factory()
         response = api_client.get(self.url)
         assert response.status_code == 200
+        assert len(response.data) > 0
         assert response.data[0]["name"] == str(product.name)
         assert response.data[0]["brand"] == product.brand.id
         assert response.data[0]["category"] == product.category.id
         assert response.data[0]["description"] == str(product.description)
         assert response.data[0]["is_digital"] == product.is_digital
+        assert response.headers["Content-Type"] == "application/json"
