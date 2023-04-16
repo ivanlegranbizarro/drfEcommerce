@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -39,10 +40,16 @@ class ProductViewSet(viewsets.ViewSet):
     A simple ViewSet for listing or retrieving products.
     """
     queryset = Product.objects.all()
+    lookup_field = "slug"
 
     @extend_schema(responses=ProductSerializer)
     def list(self, request):
         serializer = ProductSerializer(self.queryset, many=True)
+        return Response(serializer.data)
+
+    @extend_schema(responses=ProductSerializer)
+    def retrieve(self, request, slug=None):
+        serializer = ProductSerializer(self.queryset.filter(slug=slug).first())
         return Response(serializer.data)
 
     @extend_schema(responses=ProductSerializer)
