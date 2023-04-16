@@ -1,14 +1,20 @@
 from django.db import models
+from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Category(MPTTModel):
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
     parent = TreeForeignKey("self", on_delete=models.PROTECT,
                             null=True, blank=True, related_name="children")
 
     class MPTTMeta:
         order_insertion_by = ["name"]
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -16,6 +22,11 @@ class Category(MPTTModel):
 
 class Brand(models.Model):
     name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -23,11 +34,16 @@ class Brand(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
     description = models.TextField(blank=True)
     is_digital = models.BooleanField(default=False)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     category = TreeForeignKey(
         Category, on_delete=models.CASCADE, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
