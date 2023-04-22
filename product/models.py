@@ -40,6 +40,7 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     category = TreeForeignKey(
         Category, on_delete=models.CASCADE, null=True, blank=True)
+    is_active = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -55,7 +56,7 @@ class ProductLine(models.Model):
     stock_qty = models.IntegerField()
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="product_lines")
-    is_activate = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.product.name} - {self.sku}'
